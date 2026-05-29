@@ -1,4 +1,4 @@
-package com.example.k2offlineonlinenewsapp
+package com.example.k2offlineonlinenewsapp.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,8 +19,18 @@ class NewsViewModel(private val repository: NewsRepository) : ViewModel() {
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
+    private val _currentCategory = MutableLiveData<String>("business")
+    val currentCategory: LiveData<String> = _currentCategory
+
     init {
         refreshNews()
+    }
+
+    fun setCategory(category: String) {
+        if (_currentCategory.value != category) {
+            _currentCategory.value = category
+            refreshNews()
+        }
     }
 
     fun refreshNews() {
@@ -28,7 +38,8 @@ class NewsViewModel(private val repository: NewsRepository) : ViewModel() {
             _isLoading.value = true
             _error.value = null
             try {
-                repository.refreshNews()
+                val category = _currentCategory.value ?: "business"
+                repository.refreshNews(category)
             } catch (e: Exception) {
                 _error.value = e.message ?: "Unknown Error"
             } finally {

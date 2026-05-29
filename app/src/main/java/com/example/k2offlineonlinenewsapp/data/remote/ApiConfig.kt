@@ -1,22 +1,22 @@
 package com.example.k2offlineonlinenewsapp.data.remote
 
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiConfig {
     fun getApiService(): ApiService {
-        val authInterceptor = Interceptor { chain ->
-            val req = chain.request()
-            val requestHeaders = req.newBuilder()
-                .addHeader("User-Agent", "K2-News-App")
-                .build()
-            chain.proceed(requestHeaders)
-        }
+        val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
         
         val client = OkHttpClient.Builder()
-            .addInterceptor(authInterceptor)
+            .addInterceptor { chain ->
+                val request = chain.request().newBuilder()
+                    .addHeader("User-Agent", "Mozilla/5.0")
+                    .build()
+                chain.proceed(request)
+            }
+            .addInterceptor(loggingInterceptor)
             .build()
 
         val retrofit = Retrofit.Builder()

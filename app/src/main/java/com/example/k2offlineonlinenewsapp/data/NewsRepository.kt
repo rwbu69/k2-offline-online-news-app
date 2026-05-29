@@ -14,9 +14,9 @@ class NewsRepository(
         return newsDao.getAllNews()
     }
 
-    suspend fun refreshNews() {
+    suspend fun refreshNews(category: String) {
         try {
-            val response = apiService.getTopHeadlines()
+            val response = apiService.getTopHeadlines(category = category)
             val articles = response.articles
 
             // Filter articles with missing essential info if necessary, or map all
